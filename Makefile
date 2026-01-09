@@ -1,4 +1,4 @@
-.PHONY: ssh add s a
+.PHONY: ssh add s a n
 
 # Pattern rule to allow "make 1", "make 2", etc.
 # Also handles positional arguments for add command
@@ -74,9 +74,23 @@ a:
 	fi; \
 	$(MAKE) add $$args
 
+n:
+	@highest_level=0; \
+	for file in *.md; do \
+		if [ -f "$$file" ]; then \
+			filename=$$(basename "$$file" .md); \
+			if [ "$$filename" -eq "$$filename" ] 2>/dev/null && [ "$$filename" -gt "$$highest_level" ]; then \
+				highest_level=$$filename; \
+			fi; \
+		fi; \
+	done 2>/dev/null; \
+	newest_level=$$((highest_level + 1)); \
+	echo "Starting newest level: $$newest_level"; \
+	$(MAKE) ssh level=$$newest_level
+
 # Catch-all rule to handle positional arguments for add command
 %:
-	@if [ "$@" != "ssh" ] && [ "$@" != "add" ] && [ "$@" != "s" ] && [ "$@" != "a" ]; then \
+	@if [ "$@" != "ssh" ] && [ "$@" != "add" ] && [ "$@" != "s" ] && [ "$@" != "a" ] && [ "$@" != "n" ]; then \
 		if echo "$(MAKECMDGOALS)" | grep -q "^add \|^a "; then \
 			exit 0; \
 		else \
