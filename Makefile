@@ -1,4 +1,4 @@
-.PHONY: ssh add
+.PHONY: ssh add s a
 
 # Pattern rule to allow "make 1", "make 2", etc.
 # Also handles positional arguments for add command
@@ -61,10 +61,23 @@ add:
 	echo "$$actual_password" > "$${next_level}.md"; \
 	echo "Created $${next_level}.md with password: $$actual_password"
 
+# Shorthand commands
+s:
+	@$(MAKE) ssh level=$(level)
+
+a:
+	@args="$(filter-out a,$(MAKECMDGOALS))"; \
+	if [ -z "$$args" ]; then \
+		echo "Error: password parameter is required"; \
+		echo "Usage: make a <password> [level]"; \
+		exit 1; \
+	fi; \
+	$(MAKE) add $$args
+
 # Catch-all rule to handle positional arguments for add command
 %:
-	@if [ "$@" != "ssh" ] && [ "$@" != "add" ]; then \
-		if echo "$(MAKECMDGOALS)" | grep -q "^add "; then \
+	@if [ "$@" != "ssh" ] && [ "$@" != "add" ] && [ "$@" != "s" ] && [ "$@" != "a" ]; then \
+		if echo "$(MAKECMDGOALS)" | grep -q "^add \|^a "; then \
 			exit 0; \
 		else \
 			$(MAKE) ssh level=$@; \
