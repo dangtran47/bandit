@@ -1,4 +1,4 @@
-.PHONY: ssh add s a n
+.PHONY: ssh add s a n cm
 
 # Pattern rule to allow "make 1", "make 2", etc.
 # Also handles positional arguments for add command
@@ -88,9 +88,18 @@ n:
 	echo "Starting newest level: $$newest_level"; \
 	$(MAKE) ssh level=$$newest_level
 
+cm:
+	@git add *.md
+	@msg=$$(git diff --cached --name-only | grep -E '^[0-9]+\.md$$' | sed 's/\.md$$//' | sort -n | tr '\n' ' ' | sed 's/ *$$//'); \
+	if [ -z "$$msg" ]; then \
+		echo "No numbered .md files to commit"; \
+		exit 1; \
+	fi; \
+	git commit -m "$$msg"
+
 # Catch-all rule to handle positional arguments for add command
 %:
-	@if [ "$@" != "ssh" ] && [ "$@" != "add" ] && [ "$@" != "s" ] && [ "$@" != "a" ] && [ "$@" != "n" ]; then \
+	@if [ "$@" != "ssh" ] && [ "$@" != "add" ] && [ "$@" != "s" ] && [ "$@" != "a" ] && [ "$@" != "n" ] && [ "$@" != "cm" ]; then \
 		if echo "$(MAKECMDGOALS)" | grep -q "^add \|^a "; then \
 			exit 0; \
 		else \
