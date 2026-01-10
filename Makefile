@@ -20,8 +20,19 @@ ssh:
 		password=$$(head -n 1 "$${prev_level}.md"); \
 	fi; \
 	echo "Connecting to bandit$(level)..."; \
-	echo "Password: $$password"; \
-	ssh bandit$(level)@bandit.labs.overthewire.org -p 2220
+	if [ "$$password" = "SSHKEY" ]; then \
+		prev_level=$$(($(level) - 1)); \
+		keyfile="$${prev_level}.sshkey.private"; \
+		if [ ! -f "$$keyfile" ]; then \
+			echo "Error: SSH key file $$keyfile not found"; \
+			exit 1; \
+		fi; \
+		echo "Using SSH key: $$keyfile"; \
+		ssh -i "$$keyfile" bandit$(level)@bandit.labs.overthewire.org -p 2220; \
+	else \
+		echo "Password: $$password"; \
+		ssh bandit$(level)@bandit.labs.overthewire.org -p 2220; \
+	fi
 
 add:
 	@password="$(filter-out add,$(MAKECMDGOALS))"; \
