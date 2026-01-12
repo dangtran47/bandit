@@ -57,3 +57,5 @@ make a secretpass 10         # Creates 10.md with password
 | `make s level=<level>` | Connect to bandit level (shorthand) |
 | `make add <password> [level]` | Add new password file |
 | `make a <password> [level]` | Add new password file (shorthand) |
+| `make n` | Connect to newest/next level (auto-increment) |
+| `make cm` | Commit all .md password files to git |
