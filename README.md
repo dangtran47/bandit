@@ -2,6 +2,14 @@
 
 A simple Makefile-based tool for managing Bandit CTF passwords and SSH connections.
 
+## Getting Started
+
+To start from scratch, check out the starter branch:
+
+```bash
+git checkout starter
+```
+
 ## Usage
 
 ### SSH Connection
